@@ -1,7 +1,7 @@
 #include "PluginEditor.h"
-#include "BinaryData.h"
+
 RetroPluggAudioProcessorEditor::RetroPluggAudioProcessorEditor(RetroPluggAudioProcessor& p):juce::AudioProcessorEditor(&p),processor(p){
- artwork=juce::ImageCache::getFromMemory(BinaryData::RetroPlugg_png,BinaryData::RetroPlugg_pngSize);
+ 
  const struct {const char* name;int x,y;bool eq;} positions[]={
  {"saturation",133,411,false},{"bitcrush",366,411,false},{"noise",132,601,false},{"vinyl",366,601,false},
  {"delay",1117,340,false},{"delayMix",1432,317,false},{"reverb",1118,486,false},{"reverbMix",1432,463,false},
@@ -20,5 +20,5 @@ RetroPluggAudioProcessorEditor::RetroPluggAudioProcessorEditor(RetroPluggAudioPr
  }
  setSize(1152,768);
 }
-void RetroPluggAudioProcessorEditor::paint(juce::Graphics& g){g.fillAll(juce::Colours::black);if(artwork.isValid())g.drawImage(artwork,getLocalBounds().toFloat());}
+void RetroPluggAudioProcessorEditor::paint(juce::Graphics& g){g.fillAll(juce::Colour(0xff181616));g.setColour(juce::Colours::orange);g.setFont(36.f);g.drawText("RETROPLUGG",20,12,500,56,juce::Justification::centredLeft);g.setColour(juce::Colours::silver);g.setFont(18.f);g.drawText("Temporary UI — reference artwork awaiting upload",25,70,950,36,juce::Justification::centredLeft);if(artwork.isValid())g.drawImage(artwork,getLocalBounds().toFloat());}
 void RetroPluggAudioProcessorEditor::resized(){}
