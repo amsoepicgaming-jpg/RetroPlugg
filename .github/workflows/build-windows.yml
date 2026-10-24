@@ -1,0 +1,32 @@
+name: Build RetroPlugg VST3 (Windows)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-vst3:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Configure (JUCE fetched by CMake)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
+      - name: Build VST3 and standalone
+        run: cmake --build build --config Release --parallel 2
+      - name: Package compiled plugins
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $vst = Get-ChildItem build -Recurse -Directory -Filter 'RetroPlugg.vst3' | Select-Object -First 1
+          if (-not $vst) { throw 'VST3 bundle not found in build output' }
+          Copy-Item -Recurse $vst.FullName dist/
+          $exe = Get-ChildItem build -Recurse -File -Filter 'RetroPlugg.exe' | Select-Object -First 1
+          if ($exe) { Copy-Item $exe.FullName dist/ }
+      - name: Upload Windows VST3 and standalone
+        uses: actions/upload-artifact@v4
+        with:
+          name: RetroPlugg-Windows-VST3
+          path: dist/
+          if-no-files-found: error
